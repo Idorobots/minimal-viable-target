@@ -7,11 +7,34 @@ end entity;
 
 architecture TB of serial is
 
+  component UARTRX
+    generic (
+      WIDTH : integer
+      );
+
+    port (
+      clk: in std_logic;
+      rx: in std_logic;
+      data: out std_logic_vector(WIDTH-1 downto 0);
+      data_rdy: out std_logic
+      );
+  end component;
+
+
   signal clk : std_logic := '0';
   signal data : std_logic := '0';
   signal tx : std_logic := '1';
 
 begin
+
+  uart: UARTRX
+    generic map (
+      WIDTH => 8
+      )
+    port map (
+      clk => clk,
+      rx => tx
+      );
 
   -- CLK
   process
@@ -23,6 +46,7 @@ begin
   -- Data pulse
   process
   begin
+    wait for 300 ns;
     data <= not data;
     wait for 15 us;
   end process;
