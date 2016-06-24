@@ -108,15 +108,24 @@ begin
       q => stop_q
       );
 
-  -- FIXME Use 74XX components instead.
-  stop <= stop_q(3) and stop_q(1);
-  rx_inv <= not rx;
-  read_clk <= start and clk;
-  read_clk_inv <= not read_clk;
-  reset <= not stop and clr;
-  reset_inv <= not reset;
+  data_ready_flag: SN74XX74
+    generic map (
+      DELAY => 22 ns
+      )
+    port map (
+      clk => stop,
+      pr => '1',
+      clr => clr, -- FIXME Add a way to clear this flag on read.
+      d => '1',
+      q => data_rdy
+      );
 
-  -- TODO Implement these.
-  data_rdy <= '0';
+  -- FIXME Use 74XX components instead.
+  stop <= stop_q(3) and stop_q(1) after 8 ns;
+  rx_inv <= not rx after 8 ns;
+  read_clk <= start and clk after 8 ns;
+  read_clk_inv <= not read_clk after 8 ns;
+  reset <= not stop and clr after 16 ns;
+  reset_inv <= not reset after 8 ns;
 
 end;
