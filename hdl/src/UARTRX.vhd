@@ -10,6 +10,7 @@ entity UARTRX is
   port (
     clk: in std_logic;
     rx: in std_logic;
+    clr: in std_logic;
     data: out std_logic_vector(WIDTH-1 downto 0);
     data_rdy: out std_logic
     );
@@ -59,21 +60,24 @@ architecture rtl of UARTRX is
       );
   end component;
 
-  signal start: std_logic := '0';
-  signal stop: std_logic := '0';
+  signal start: std_logic;
+  signal stop: std_logic;
   signal stop_q: std_logic_vector(11 downto 0);
-  signal reset: std_logic := '0';
+  signal reset: std_logic;
+  signal reset_inv: std_logic;
   signal read_clk: std_logic;
-  signal read_rx: std_logic;
+  signal read_clk_inv: std_logic;
+  signal rx_inv: std_logic;
 
 begin
 
+  -- FIXME Adjust delays for the simulation purposes.
   start_bit_detect: SN74XX74
     generic map (
       DELAY => 22 ns
       )
     port map (
-      clk => read_rx,
+      clk => rx_inv,
       pr => '1',
       clr => reset,
       d => '1',
@@ -99,17 +103,18 @@ begin
       DELAY => 22 ns
       )
     port map (
-      clk => read_clk,
-      clr => stop,
+      clk => read_clk_inv,
+      clr => reset_inv,
       q => stop_q
       );
 
   -- FIXME Use 74XX components instead.
-  stop <= stop_q(3) and stop_q(0) and read_clk;
-
-  read_rx <= not rx;
+  stop <= stop_q(3) and stop_q(1);
+  rx_inv <= not rx;
   read_clk <= start and clk;
-  reset <= not stop;
+  read_clk_inv <= not read_clk;
+  reset <= not stop and clr;
+  reset_inv <= not reset;
 
   -- TODO Implement these.
   data_rdy <= '0';

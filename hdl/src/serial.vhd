@@ -15,15 +15,20 @@ architecture TB of serial is
     port (
       clk: in std_logic;
       rx: in std_logic;
+      clr: in std_logic;
       data: out std_logic_vector(WIDTH-1 downto 0);
       data_rdy: out std_logic
       );
   end component;
 
 
-  signal clk : std_logic := '0';
+  signal rx_clk : std_logic := '0';
+  signal tx_clk : std_logic := '0';
   signal data : std_logic := '0';
   signal tx : std_logic := '1';
+  signal reset : std_logic := '0';
+
+  constant DELAY: time := 125 ns;
 
 begin
 
@@ -32,27 +37,43 @@ begin
       WIDTH => 8
       )
     port map (
-      clk => clk,
-      rx => tx
+      clk => rx_clk,
+      rx => tx,
+      clr => reset
       );
 
-  -- CLK
+  -- Reset pulse
   process
   begin
-    clk <= not clk;
+    reset <= '0';
+    wait for 200 ns;
+    reset <= '1';
+    wait for 50 us;
+  end process;
+
+  -- Tx CLK
+  process
+  begin
+    tx_clk <= not tx_clk;
+    wait for 250 ns;
+  end process;
+
+  -- Rx CLK
+  process
+  begin
+    rx_clk <= not rx_clk after DELAY;
     wait for 250 ns;
   end process;
 
   -- Data pulse
   process
   begin
-    wait for 300 ns;
+    wait for 10 us;
     data <= not data;
-    wait for 15 us;
   end process;
 
-  -- Rx
-  process(clk, data)
+  -- Tx
+  process(tx_clk, data)
     constant wave : std_logic_vector := "0100101101";
     variable index : integer := 0;
     variable triggered : boolean := false;
@@ -61,7 +82,7 @@ begin
        triggered := true;
     end if;
 
-    if rising_edge(clk) and triggered then
+    if rising_edge(tx_clk) and triggered then
       tx <= wave(index);
       if index < wave'high then
         index := index + 1;
