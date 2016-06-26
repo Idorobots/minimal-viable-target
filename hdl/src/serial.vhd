@@ -25,10 +25,12 @@ architecture TB of serial is
 
   signal rx_clk : std_logic := '0';
   signal tx_clk : std_logic := '0';
-  signal data : std_logic := '0';
+  signal data_pulse : std_logic := '0';
+  signal data : std_logic_vector(9 downto 0);
   signal tx : std_logic := '1';
   signal reset : std_logic := '0';
   signal rd: std_logic := '1';
+  signal rdy: std_logic;
 
   constant DELAY: time := 52 us;
 
@@ -42,7 +44,8 @@ begin
       clk => rx_clk,
       rx => tx,
       clr => reset,
-      rd => rd
+      rd => rd,
+      data_rdy => rdy
       );
 
   -- Reset pulse
@@ -68,38 +71,47 @@ begin
     wait for 104 us;
   end process;
 
-  -- RD pulse
-  process
-  begin
-    rd <= '1';
-    wait for 27 ms;
-    rd <= '0';
-    wait for 1 ms;
-  end process;
-
   -- Data pulse
   process
   begin
-    wait for 10 ms;
-    data <= not data;
+    wait for 7 ms;
+    data_pulse <= '1';
+    wait for 200 ns;
+    data_pulse <= '0';
+    data <= "0100101101";
+    wait for 7 ms;
+    data_pulse <= '1';
+    wait for 200 ns;
+    data_pulse <= '0';
+    data <= "0110010011";
+  end process;
+
+  -- Data read
+  process
+  begin
+    wait for 235 us;
+    if rdy = '1' then
+      rd <= '0';
+      wait for 1 ms;
+      rd <= '1';
+    end if;
   end process;
 
   -- Tx
-  process(tx_clk, data)
-    constant wave : std_logic_vector := "0100101101";
-    variable index : integer := 0;
+  process(tx_clk, data_pulse)
+    variable index : integer := data'high;
     variable triggered : boolean := false;
   begin
-    if data'event then
+    if rising_edge(data_pulse) then
        triggered := true;
     end if;
 
     if rising_edge(tx_clk) and triggered then
-      tx <= wave(index);
-      if index < wave'high then
-        index := index + 1;
+      tx <= data(index);
+      if index > data'low then
+        index := index - 1;
       else
-        index := 0;
+        index := data'high;
         triggered := false;
       end if;
     end if;
