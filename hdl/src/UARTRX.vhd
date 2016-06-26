@@ -77,13 +77,13 @@ architecture rtl of UARTRX is
   end component;
 
   signal start: std_logic;
-  signal stop: std_logic;
-  signal stop_inv: std_logic;
+  signal rdy: std_logic;
+  signal rdy_inv: std_logic;
   signal reset: std_logic;
-  signal reset_inv: std_logic;
   signal read_clk: std_logic;
+  signal clk_div: std_logic;
+  signal read_clk_div2: std_logic;
   signal read_clk_inv: std_logic;
-  signal read_clk_inv_div2: std_logic;
   signal rx_inv: std_logic;
   signal serial_data: std_logic_vector(WIDTH-1 downto 0);
   signal data_clear: std_logic;
@@ -105,29 +105,17 @@ begin
       q => start
       );
 
-  reg: SN74XX164
-    generic map (
-      WIDTH => WIDTH,
-      DELAY => 22 ns
-      )
-    port map (
-      clr => reset,
-      clk => read_clk,
-      a => rx,
-      b => rx,
-      q => serial_data
-      );
-
   div2: SN74XX74
     generic map (
       DELAY => 22 ns
       )
     port map (
-      clk => read_clk_inv,
+      clk => read_clk,
       pr => '1',
-      clr => clr,
-      d => read_clk_inv_div2,
-      nq => read_clk_inv_div2
+      clr => reset,
+      d => clk_div,
+      nq => clk_div,
+      q => read_clk_div2
       );
 
   cycle_counter: SN74XX164
@@ -136,23 +124,24 @@ begin
       DELAY => 22 ns
       )
     port map (
-      clr => reset,
-      clk => read_clk_inv_div2,
+      clr => data_clear,
+      clk => read_clk_div2,
       a => '1',
       b => '1',
       q => cycle_count
       );
 
-  data_ready_flag: SN74XX74
+  reg: SN74XX164
     generic map (
+      WIDTH => WIDTH,
       DELAY => 22 ns
       )
     port map (
-      clk => stop,
-      pr => '1',
-      clr => data_clear,
-      d => '1',
-      q => data_rdy
+      clr => clr,
+      clk => read_clk,
+      a => rx,
+      b => rx,
+      q => serial_data
       );
 
   latch: SN74XX373
@@ -167,16 +156,17 @@ begin
       output => data
       );
 
-  -- FIXME Use 74XX components instead.
-  le <= cycle_count(4) and read_clk_inv after 8 ns;
-  stop <= cycle_count(4) and read_clk after 8 ns;
+  data_rdy <= rdy;
 
+  -- FIXME Use 74XX components instead.;
   rx_inv <= not rx after 8 ns;
+
   read_clk <= start and clk after 8 ns;
-  read_clk_inv <= not read_clk after 8 ns;
-  stop_inv <= not stop after 8 ns;
-  reset <= stop_inv and clr after 8 ns;
-  reset_inv <= not reset after 8 ns;
+  rdy <= cycle_count(4) and not read_clk after 16 ns;
+  rdy_inv <= not rdy after 8 ns;
+  le <= cycle_count(4) and rdy_inv after 8 ns;
+
+  reset <= rdy_inv and clr after 8 ns;
   data_clear <= clr and rd after 8 ns;
 
 end;
