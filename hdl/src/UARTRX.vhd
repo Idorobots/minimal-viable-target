@@ -78,16 +78,17 @@ architecture rtl of UARTRX is
 
   signal start: std_logic;
   signal stop: std_logic;
-  signal stop_q: std_logic_vector(11 downto 0);
   signal stop_inv: std_logic;
   signal reset: std_logic;
   signal reset_inv: std_logic;
   signal read_clk: std_logic;
   signal read_clk_inv: std_logic;
+  signal read_clk_inv_div2: std_logic;
   signal rx_inv: std_logic;
   signal serial_data: std_logic_vector(WIDTH-1 downto 0);
   signal data_clear: std_logic;
   signal le: std_logic;
+  signal cycle_count: std_logic_vector(WIDTH-1 downto 0);
 
 begin
 
@@ -117,15 +118,29 @@ begin
       q => serial_data
       );
 
-  stop_bit_detect: SN74XX4040
+  div2: SN74XX74
     generic map (
-      WIDTH => stop_q'high+1,
       DELAY => 22 ns
       )
     port map (
       clk => read_clk_inv,
-      clr => reset_inv,
-      q => stop_q
+      pr => '1',
+      clr => clr,
+      d => read_clk_inv_div2,
+      nq => read_clk_inv_div2
+      );
+
+  cycle_counter: SN74XX164
+    generic map (
+      WIDTH => WIDTH,
+      DELAY => 22 ns
+      )
+    port map (
+      clr => reset,
+      clk => read_clk_inv_div2,
+      a => '1',
+      b => '1',
+      q => cycle_count
       );
 
   data_ready_flag: SN74XX74
@@ -153,8 +168,9 @@ begin
       );
 
   -- FIXME Use 74XX components instead.
-  le <= stop_q(3) and stop_q(0) after 8 ns;
-  stop <= stop_q(3) and stop_q(1) after 8 ns;
+  le <= cycle_count(4) and read_clk_inv after 8 ns;
+  stop <= cycle_count(4) and read_clk after 8 ns;
+
   rx_inv <= not rx after 8 ns;
   read_clk <= start and clk after 8 ns;
   read_clk_inv <= not read_clk after 8 ns;
