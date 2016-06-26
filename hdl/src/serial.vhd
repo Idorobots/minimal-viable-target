@@ -15,7 +15,6 @@ architecture TB of serial is
     port (
       clk: in std_logic;
       rx: in std_logic;
-      clr: in std_logic;
       rd: in std_logic;
       data: out std_logic_vector(WIDTH-1 downto 0);
       data_rdy: out std_logic
@@ -43,7 +42,6 @@ begin
     port map (
       clk => rx_clk,
       rx => tx,
-      clr => reset,
       rd => rd,
       data_rdy => rdy
       );
@@ -89,12 +87,10 @@ begin
   -- Data read
   process
   begin
-    wait for 235 us;
-    if rdy = '1' then
-      rd <= '0';
-      wait for 1 ms;
-      rd <= '1';
-    end if;
+    rd <= '0';
+    wait for 1 ms;
+    rd <= '1';
+    wait for 5 ms;
   end process;
 
   -- Tx

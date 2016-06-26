@@ -10,7 +10,6 @@ entity UARTRX is
   port (
     clk: in std_logic;
     rx: in std_logic;
-    clr: in std_logic;
     rd: in std_logic;
     data: out std_logic_vector(WIDTH-1 downto 0);
     data_rdy: out std_logic
@@ -86,9 +85,9 @@ architecture rtl of UARTRX is
   signal read_clk_inv: std_logic;
   signal rx_inv: std_logic;
   signal serial_data: std_logic_vector(WIDTH-1 downto 0);
-  signal data_clear: std_logic;
   signal le: std_logic;
   signal cycle_count: std_logic_vector(WIDTH-1 downto 0);
+  signal last_cycle: std_logic;
 
 begin
 
@@ -124,7 +123,7 @@ begin
       DELAY => 22 ns
       )
     port map (
-      clr => data_clear,
+      clr => rd,
       clk => read_clk_div2,
       a => '1',
       b => '1',
@@ -137,7 +136,7 @@ begin
       DELAY => 22 ns
       )
     port map (
-      clr => clr,
+      clr => reset,
       clk => read_clk,
       a => rx,
       b => rx,
@@ -156,17 +155,17 @@ begin
       output => data
       );
 
+  last_cycle <= cycle_count(4);
   data_rdy <= rdy;
 
-  -- FIXME Use 74XX components instead.;
+  -- FIXME Use 74XX components instead.
   rx_inv <= not rx after 8 ns;
+  rdy_inv <= not rdy after 8 ns;
+  read_clk_inv <= not read_clk after 8 ns;
 
   read_clk <= start and clk after 8 ns;
-  rdy <= cycle_count(4) and not read_clk after 16 ns;
-  rdy_inv <= not rdy after 8 ns;
-  le <= cycle_count(4) and rdy_inv after 8 ns;
-
-  reset <= rdy_inv and clr after 8 ns;
-  data_clear <= clr and rd after 8 ns;
+  rdy <= last_cycle and read_clk_inv after 8 ns;
+  le <= last_cycle and read_clk after 8 ns;
+  reset <= rdy_inv and rd after 8 ns;
 
 end;
