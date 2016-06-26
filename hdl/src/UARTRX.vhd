@@ -11,6 +11,7 @@ entity UARTRX is
     clk: in std_logic;
     rx: in std_logic;
     clr: in std_logic;
+    rd: in std_logic;
     data: out std_logic_vector(WIDTH-1 downto 0);
     data_rdy: out std_logic
     );
@@ -60,14 +61,33 @@ architecture rtl of UARTRX is
       );
   end component;
 
+  component SN74XX373
+    generic (
+      WIDTH : integer;
+      DELAY : time
+      );
+
+    port (
+      oe : in std_logic;
+      le : in std_logic;
+      input : in std_logic_vector (WIDTH-1 downto 0);
+      output : out std_logic_vector (WIDTH-1 downto 0)
+      );
+
+  end component;
+
   signal start: std_logic;
   signal stop: std_logic;
   signal stop_q: std_logic_vector(11 downto 0);
+  signal stop_inv: std_logic;
   signal reset: std_logic;
   signal reset_inv: std_logic;
   signal read_clk: std_logic;
   signal read_clk_inv: std_logic;
   signal rx_inv: std_logic;
+  signal serial_data: std_logic_vector(WIDTH-1 downto 0);
+  signal data_clear: std_logic;
+  signal le: std_logic;
 
 begin
 
@@ -94,7 +114,7 @@ begin
       clk => read_clk,
       a => rx,
       b => rx,
-      q => data
+      q => serial_data
       );
 
   stop_bit_detect: SN74XX4040
@@ -115,17 +135,32 @@ begin
     port map (
       clk => stop,
       pr => '1',
-      clr => clr, -- FIXME Add a way to clear this flag on read.
+      clr => data_clear,
       d => '1',
       q => data_rdy
       );
 
+  latch: SN74XX373
+    generic map (
+      WIDTH => WIDTH,
+      DELAY => 22 ns
+      )
+    port map (
+      oe => rd,
+      le => le,
+      input => serial_data,
+      output => data
+      );
+
   -- FIXME Use 74XX components instead.
+  le <= stop_q(3) and stop_q(0) after 8 ns;
   stop <= stop_q(3) and stop_q(1) after 8 ns;
   rx_inv <= not rx after 8 ns;
   read_clk <= start and clk after 8 ns;
   read_clk_inv <= not read_clk after 8 ns;
-  reset <= not stop and clr after 16 ns;
+  stop_inv <= not stop after 8 ns;
+  reset <= stop_inv and clr after 8 ns;
   reset_inv <= not reset after 8 ns;
+  data_clear <= clr and rd after 8 ns;
 
 end;

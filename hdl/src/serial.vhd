@@ -16,6 +16,7 @@ architecture TB of serial is
       clk: in std_logic;
       rx: in std_logic;
       clr: in std_logic;
+      rd: in std_logic;
       data: out std_logic_vector(WIDTH-1 downto 0);
       data_rdy: out std_logic
       );
@@ -27,8 +28,9 @@ architecture TB of serial is
   signal data : std_logic := '0';
   signal tx : std_logic := '1';
   signal reset : std_logic := '0';
+  signal rd: std_logic := '1';
 
-  constant DELAY: time := 125 ns;
+  constant DELAY: time := 52 us;
 
 begin
 
@@ -39,7 +41,8 @@ begin
     port map (
       clk => rx_clk,
       rx => tx,
-      clr => reset
+      clr => reset,
+      rd => rd
       );
 
   -- Reset pulse
@@ -48,27 +51,36 @@ begin
     reset <= '0';
     wait for 200 ns;
     reset <= '1';
-    wait for 50 us;
+    wait for 50 ms;
   end process;
 
   -- Tx CLK
   process
   begin
     tx_clk <= not tx_clk;
-    wait for 250 ns;
+    wait for 104 us;
   end process;
 
   -- Rx CLK
   process
   begin
     rx_clk <= not rx_clk after DELAY;
-    wait for 250 ns;
+    wait for 104 us;
+  end process;
+
+  -- RD pulse
+  process
+  begin
+    rd <= '1';
+    wait for 27 ms;
+    rd <= '0';
+    wait for 1 ms;
   end process;
 
   -- Data pulse
   process
   begin
-    wait for 10 us;
+    wait for 10 ms;
     data <= not data;
   end process;
 

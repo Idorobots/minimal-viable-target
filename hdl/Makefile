@@ -5,7 +5,7 @@ SRC = src/*.vhd
 SIM = sim
 
 OUTPUT = $(SIM)/$(TARGET).ghw
-SFLAGS = --stop-time=50us --wave=$(OUTPUT)
+SFLAGS = --stop-time=50ms --wave=$(OUTPUT)
 
 VIEWER = gtkwave
 
