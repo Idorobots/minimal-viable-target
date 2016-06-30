@@ -18,7 +18,7 @@ architecture TB of serial is
       clr: in std_logic;
       rd: in std_logic;
       data: out std_logic_vector(WIDTH-1 downto 0);
-      data_rdy: out std_logic
+      rdy: out std_logic
       );
   end component;
 
@@ -45,7 +45,7 @@ begin
       rx => tx,
       clr => reset,
       rd => rd,
-      data_rdy => rdy
+      rdy => rdy
       );
 
   -- Reset pulse

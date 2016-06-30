@@ -13,7 +13,7 @@ entity UARTRX is
     clr: in std_logic;
     rd: in std_logic;
     data: out std_logic_vector(WIDTH-1 downto 0);
-    data_rdy: out std_logic
+    rdy: out std_logic
     );
 end UARTRX;
 
@@ -77,8 +77,8 @@ architecture rtl of UARTRX is
   end component;
 
   signal start: std_logic;
-  signal rdy: std_logic;
-  signal rdy_inv: std_logic;
+  signal data_rdy: std_logic;
+  signal data_rdy_inv: std_logic;
   signal reset: std_logic;
   signal read_clk: std_logic;
   signal clk_div: std_logic;
@@ -156,17 +156,17 @@ begin
       output => data
       );
 
-  data_rdy <= rdy;
+  rdy <= data_rdy;
 
   -- FIXME Use 74XX components instead.;
   rx_inv <= not rx after 8 ns;
 
   read_clk <= start and clk after 8 ns;
-  rdy <= cycle_count(4) and not read_clk after 16 ns;
-  rdy_inv <= not rdy after 8 ns;
-  le <= cycle_count(4) and rdy_inv after 8 ns;
+  data_rdy <= cycle_count(4) and not read_clk after 16 ns;
+  data_rdy_inv <= not data_rdy after 8 ns;
+  le <= cycle_count(4) and data_rdy_inv after 8 ns;
 
-  reset <= rdy_inv and clr after 8 ns;
+  reset <= data_rdy_inv and clr after 8 ns;
   data_clear <= clr and rd after 8 ns;
 
 end;
