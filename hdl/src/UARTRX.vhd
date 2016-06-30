@@ -48,19 +48,6 @@ architecture rtl of UARTRX is
       );
   end component;
 
-  component SN74XX4040
-    generic (
-      WIDTH : integer;
-      DELAY : time
-      );
-
-    port (
-      clk : in std_logic;
-      clr : in std_logic;
-      q : out std_logic_vector(WIDTH-1 downto 0)
-      );
-  end component;
-
   component SN74XX373
     generic (
       WIDTH : integer;
@@ -73,7 +60,6 @@ architecture rtl of UARTRX is
       input : in std_logic_vector (WIDTH-1 downto 0);
       output : out std_logic_vector (WIDTH-1 downto 0)
       );
-
   end component;
 
   signal start: std_logic;
@@ -81,14 +67,11 @@ architecture rtl of UARTRX is
   signal data_rdy_inv: std_logic;
   signal reset: std_logic;
   signal read_clk: std_logic;
-  signal clk_div: std_logic;
-  signal read_clk_div2: std_logic;
-  signal read_clk_inv: std_logic;
   signal rx_inv: std_logic;
   signal serial_data: std_logic_vector(WIDTH-1 downto 0);
   signal data_clear: std_logic;
   signal le: std_logic;
-  signal cycle_count: std_logic_vector(WIDTH-1 downto 0);
+  signal cycle: std_logic_vector(WIDTH downto 0);
 
 begin
 
@@ -105,19 +88,6 @@ begin
       q => start
       );
 
-  div2: SN74XX74
-    generic map (
-      DELAY => 22 ns
-      )
-    port map (
-      clk => read_clk,
-      pr => '1',
-      clr => reset,
-      d => clk_div,
-      nq => clk_div,
-      q => read_clk_div2
-      );
-
   cycle_counter: SN74XX164
     generic map (
       WIDTH => WIDTH,
@@ -125,10 +95,22 @@ begin
       )
     port map (
       clr => data_clear,
-      clk => read_clk_div2,
+      clk => read_clk,
       a => '1',
       b => '1',
-      q => cycle_count
+      q => cycle(WIDTH-1 downto 0)
+      );
+
+  cycle_counter_last: SN74XX74
+    generic map (
+      DELAY => 22 ns
+      )
+    port map (
+      clk => read_clk,
+      pr => '1',
+      clr => data_clear,
+      d => cycle(WIDTH-1),
+      q => cycle(WIDTH)
       );
 
   reg: SN74XX164
@@ -157,16 +139,16 @@ begin
       );
 
   rdy <= data_rdy;
+  data_rdy <= cycle(8);
 
   -- FIXME Use 74XX components instead.;
   rx_inv <= not rx after 8 ns;
-
-  read_clk <= start and clk after 8 ns;
-  data_rdy <= cycle_count(4) and not read_clk after 16 ns;
   data_rdy_inv <= not data_rdy after 8 ns;
-  le <= cycle_count(4) and data_rdy_inv after 8 ns;
 
-  reset <= data_rdy_inv and clr after 8 ns;
+  -- NOTE Could use just cycle(7) to save an AND.
+  le <= cycle(7) and data_rdy_inv after 8 ns;
+  read_clk <= start and clk after 8 ns;
+  reset <= clr and data_rdy_inv after 8 ns;
   data_clear <= clr and rd after 8 ns;
 
 end;

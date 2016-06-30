@@ -22,7 +22,6 @@ architecture TB of serial is
       );
   end component;
 
-
   signal rx_clk : std_logic := '0';
   signal tx_clk : std_logic := '0';
   signal data_pulse : std_logic := '0';
