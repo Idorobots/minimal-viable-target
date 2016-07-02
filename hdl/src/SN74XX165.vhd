@@ -22,7 +22,6 @@ end SN74XX165;
 
 architecture rtl of SN74XX165 is
   signal reg : unsigned(WIDTH-1 downto 0) := (others => '0');
-  signal output: std_logic;
 begin
 
   q <= reg(reg'high) after DELAY;

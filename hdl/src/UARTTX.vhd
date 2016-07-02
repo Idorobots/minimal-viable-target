@@ -150,7 +150,7 @@ begin
 
   reg: SN74XX165
     generic map (
-      WIDTH => 8,
+      WIDTH => WIDTH,
       DELAY => 22 ns
       )
     port map (

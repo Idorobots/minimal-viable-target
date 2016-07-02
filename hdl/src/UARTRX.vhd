@@ -68,7 +68,7 @@ architecture rtl of UARTRX is
   signal reset: std_logic;
   signal read_clk: std_logic;
   signal rx_inv: std_logic;
-  signal serial_data: std_logic_vector(WIDTH-1 downto 0);
+  signal serial_data: std_logic_vector(data'range);
   signal latched_data: std_logic_vector(data'range);
   signal data_clear: std_logic;
   signal le: std_logic;
@@ -148,7 +148,7 @@ begin
   rdy <= data_rdy;
   data_rdy <= cycle(8);
 
-  -- FIXME Use 74XX components instead.;
+  -- FIXME Use 74XX components instead.
   rx_inv <= not rx after 8 ns;
   data_rdy_inv <= not data_rdy after 8 ns;
 
