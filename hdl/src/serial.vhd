@@ -107,6 +107,14 @@ begin
   process
   begin
     wr_data <= "00000000";
+
+    wait for 7 ms;
+    wr_data <= "00000001";
+    wait for 100 ns;
+    wr <= '0';
+    wait for 1 ms;
+    wr <= '1';
+
     wait for 7 ms;
     wr_data <= "10110000";
     wait for 100 ns;

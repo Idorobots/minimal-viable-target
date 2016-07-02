@@ -65,6 +65,7 @@ architecture rtl of UARTTX is
       );
   end component;
 
+  signal parallel_data: std_logic_vector(data'range);
   signal clr_inv: std_logic;
   signal wr_sync: std_logic;
   signal wr_sync_inv: std_logic;
@@ -157,9 +158,15 @@ begin
       ce => '0',
       pl => wr,
       ds => '1',
-      d => data,
+      d => parallel_data,
       q => tx_data
       );
+
+  -- Reverse the data, so we send LSB first.
+  reverse_data:
+  for i in data'range generate
+    parallel_data(data'high - i) <= data(i);
+  end generate;
 
   -- FIXME Use 74XX components instead.
   clr_inv <= not clr after 8 ns;

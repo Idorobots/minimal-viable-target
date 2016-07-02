@@ -69,6 +69,7 @@ architecture rtl of UARTRX is
   signal read_clk: std_logic;
   signal rx_inv: std_logic;
   signal serial_data: std_logic_vector(WIDTH-1 downto 0);
+  signal latched_data: std_logic_vector(data'range);
   signal data_clear: std_logic;
   signal le: std_logic;
   signal cycle: std_logic_vector(WIDTH downto 0);
@@ -135,8 +136,14 @@ begin
       oe => rd,
       le => le,
       input => serial_data,
-      output => data
+      output => latched_data
       );
+
+  -- Reverse the data, so we receive LSB first.
+  reverse_data:
+  for i in data'range generate
+    data(data'high - i) <= latched_data(i);
+  end generate;
 
   rdy <= data_rdy;
   data_rdy <= cycle(8);
