@@ -65,17 +65,20 @@ architecture rtl of UARTTX is
       );
   end component;
 
+  signal clr_inv: std_logic;
   signal wr_inv: std_logic;
   signal wr_sync: std_logic;
   signal wr_sync_inv: std_logic;
   signal wr_en: std_logic;
   signal wr_en_inv: std_logic;
   signal write_clk: std_logic;
+  signal write_clk_inv: std_logic;
   signal reset: std_logic;
-  signal cycle: std_logic_vector(WIDTH downto 0);
+  signal cycle: std_logic_vector(WIDTH-1 downto 0);
   signal busy: std_logic;
   signal done: std_logic;
   signal tx_data: std_logic;
+  signal tx_data_fixed_inv: std_logic;
   signal start_bit: std_logic;
 
 begin
@@ -130,7 +133,7 @@ begin
       clk => write_clk,
       a => '1',
       b => '1',
-      q => cycle(WIDTH-1 downto 0)
+      q => cycle
       );
 
   cycle_counter_last: SN74XX74
@@ -141,8 +144,8 @@ begin
       clk => write_clk,
       pr => '1',
       clr => reset,
-      d => cycle(WIDTH-1),
-      q => cycle(WIDTH)
+      d => cycle(cycle'high),
+      q => done
       );
 
   reg: SN74XX165
@@ -161,12 +164,13 @@ begin
 
   -- FIXME Use 74XX components instead.
   wr_inv <= not wr after 8 ns;
-  done <= not cycle(8) after 8 ns;
+  clr_inv <= not clr after 8 ns;
+  write_clk <= not write_clk_inv after 8 ns;
 
-  reset <= clr and done after 8 ns;
-
-  start_bit <= wr_sync_inv or wr_en after 8 ns;
-  write_clk <= wr_en_inv or clk after 8 ns;
-  tx <= (wr_sync_inv or tx_data) and start_bit after 16 ns;
+  write_clk_inv <= wr_en_inv nor clk after 8 ns;
+  reset <= clr_inv nor done after 8 ns;
+  start_bit <= wr_sync_inv nor wr_en after 8 ns;
+  tx_data_fixed_inv <= wr_sync_inv nor tx_data after 8 ns;
+  tx <= tx_data_fixed_inv nor start_bit after 8 ns;
 
 end;
