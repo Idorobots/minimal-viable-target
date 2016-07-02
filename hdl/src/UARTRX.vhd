@@ -63,7 +63,6 @@ architecture rtl of UARTRX is
   end component;
 
   signal start: std_logic;
-  signal data_rdy: std_logic;
   signal data_rdy_inv: std_logic;
   signal reset: std_logic;
   signal read_clk: std_logic;
@@ -111,7 +110,8 @@ begin
       pr => '1',
       clr => data_clear,
       d => cycle(WIDTH-1),
-      q => cycle(WIDTH)
+      q => rdy,
+      nq => data_rdy_inv
       );
 
   reg: SN74XX164
@@ -145,12 +145,8 @@ begin
     data(data'high - i) <= latched_data(i);
   end generate;
 
-  rdy <= data_rdy;
-  data_rdy <= cycle(8);
-
   -- FIXME Use 74XX components instead.
   rx_inv <= not rx after 8 ns;
-  data_rdy_inv <= not data_rdy after 8 ns;
 
   -- NOTE Could use just cycle(7) to save an AND.
   le <= cycle(7) and data_rdy_inv after 8 ns;
