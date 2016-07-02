@@ -66,7 +66,6 @@ architecture rtl of UARTTX is
   end component;
 
   signal clr_inv: std_logic;
-  signal wr_inv: std_logic;
   signal wr_sync: std_logic;
   signal wr_sync_inv: std_logic;
   signal wr_en: std_logic;
@@ -89,7 +88,7 @@ begin
       DELAY => 22 ns
       )
     port map (
-      clk => wr_inv,
+      clk => wr,
       pr => '1',
       clr => reset,
       d => '1',
@@ -163,7 +162,6 @@ begin
       );
 
   -- FIXME Use 74XX components instead.
-  wr_inv <= not wr after 8 ns;
   clr_inv <= not clr after 8 ns;
   write_clk <= not write_clk_inv after 8 ns;
 
