@@ -380,23 +380,6 @@ or will meet your specific requirements.&lt;p&gt;
 <pin name="B" x="-10.16" y="-2.54" visible="pad" length="short" direction="in" swaplevel="1"/>
 <pin name="Y" x="10.16" y="0" visible="pad" length="short" direction="out" rot="R180"/>
 </symbol>
-<symbol name="04">
-<wire x1="-5.08" y1="-5.08" x2="-5.08" y2="0" width="0.254" layer="94"/>
-<wire x1="5.08" y1="5.08" x2="-5.08" y2="5.08" width="0.254" layer="94"/>
-<wire x1="5.08" y1="5.08" x2="5.08" y2="1.27" width="0.254" layer="94"/>
-<wire x1="-5.08" y1="-5.08" x2="5.08" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="7.62" y1="0" x2="5.08" y2="1.27" width="0.1524" layer="94"/>
-<wire x1="5.08" y1="1.27" x2="5.08" y2="0" width="0.254" layer="94"/>
-<wire x1="5.08" y1="0" x2="7.62" y2="0" width="0.1524" layer="94"/>
-<wire x1="5.08" y1="0" x2="5.08" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="-7.62" y1="0" x2="-5.08" y2="0" width="0.1524" layer="94"/>
-<wire x1="-5.08" y1="0" x2="-5.08" y2="5.08" width="0.254" layer="94"/>
-<text x="-5.08" y="5.715" size="2.032" layer="95">&gt;NAME</text>
-<text x="-5.08" y="-8.255" size="2.032" layer="96">&gt;VALUE</text>
-<text x="-0.3302" y="1.905" size="2.032" layer="94">1</text>
-<pin name="A" x="-10.16" y="0" visible="pad" length="short" direction="in" swaplevel="1"/>
-<pin name="Y" x="10.16" y="0" visible="pad" length="short" direction="out" rot="R180"/>
-</symbol>
 <symbol name="74">
 <wire x1="-5.08" y1="-10.16" x2="5.08" y2="-10.16" width="0.254" layer="94"/>
 <wire x1="-5.08" y1="-10.16" x2="-5.08" y2="-7.62" width="0.254" layer="94"/>
@@ -675,42 +658,6 @@ or will meet your specific requirements.&lt;p&gt;
 </device>
 </devices>
 </deviceset>
-<deviceset name="74*04" prefix="V">
-<description>Hex &lt;b&gt;INVERTER&lt;/b&gt;</description>
-<gates>
-<gate name="/+UB" symbol="+UB" x="15.24" y="12.7" addlevel="request"/>
-<gate name="/-UB" symbol="-UB" x="15.24" y="5.08" addlevel="request"/>
-<gate name="/1" symbol="04" x="0" y="0" swaplevel="1"/>
-<gate name="/2" symbol="04" x="0" y="17.78" swaplevel="1"/>
-<gate name="/3" symbol="04" x="0" y="35.56" swaplevel="1"/>
-<gate name="/4" symbol="04" x="-25.4" y="0" swaplevel="1"/>
-<gate name="/5" symbol="04" x="-25.4" y="17.78" swaplevel="1"/>
-<gate name="/6" symbol="04" x="-25.4" y="35.56" swaplevel="1"/>
-</gates>
-<devices>
-<device name="N" package="DIL14">
-<connects>
-<connect gate="/+UB" pin="+UB" pad="14"/>
-<connect gate="/-UB" pin="-UB" pad="7"/>
-<connect gate="/1" pin="A" pad="1"/>
-<connect gate="/1" pin="Y" pad="2"/>
-<connect gate="/2" pin="A" pad="3"/>
-<connect gate="/2" pin="Y" pad="4"/>
-<connect gate="/3" pin="A" pad="5"/>
-<connect gate="/3" pin="Y" pad="6"/>
-<connect gate="/4" pin="A" pad="9"/>
-<connect gate="/4" pin="Y" pad="8"/>
-<connect gate="/5" pin="A" pad="11"/>
-<connect gate="/5" pin="Y" pad="10"/>
-<connect gate="/6" pin="A" pad="13"/>
-<connect gate="/6" pin="Y" pad="12"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="74*74" prefix="V">
 <description>Dual D type positive edge triggered &lt;b&gt;FLIP FLOP&lt;/b&gt;, preset and clear</description>
 <gates>
@@ -878,7 +825,6 @@ or will meet your specific requirements.&lt;p&gt;
 <part name="V2" library="74ttl-din" deviceset="74*164" device="N"/>
 <part name="V3" library="74ttl-din" deviceset="74*373" device="N"/>
 <part name="V4" library="74ttl-din" deviceset="74*08" device="N"/>
-<part name="V6" library="74ttl-din" deviceset="74*04" device="N"/>
 <part name="V7" library="74ttl-din" deviceset="74*74" device="N"/>
 <part name="V5" library="74ttl-din" deviceset="74*74" device="N"/>
 <part name="V8" library="74ttl-din" deviceset="74*74" device="N"/>
@@ -909,9 +855,6 @@ or will meet your specific requirements.&lt;p&gt;
 <instance part="V4" gate="/2" x="55.88" y="175.26"/>
 <instance part="V4" gate="/3" x="17.78" y="101.6" rot="R90"/>
 <instance part="V4" gate="/4" x="152.4" y="101.6"/>
-<instance part="V6" gate="/1" x="5.08" y="134.62"/>
-<instance part="V6" gate="/2" x="137.16" y="38.1"/>
-<instance part="V6" gate="/3" x="195.58" y="78.74"/>
 <instance part="V7" gate="/1" x="30.48" y="132.08"/>
 <instance part="V7" gate="/2" x="127" y="88.9"/>
 <instance part="V5" gate="/1" x="12.7" y="45.72" rot="MR180"/>
@@ -924,7 +867,7 @@ or will meet your specific requirements.&lt;p&gt;
 <instance part="P+2" gate="VCC" x="73.66" y="132.08"/>
 <instance part="P+3" gate="VCC" x="114.3" y="101.6"/>
 <instance part="P+4" gate="VCC" x="-5.08" y="53.34"/>
-<instance part="P+5" gate="VCC" x="38.1" y="30.48" rot="R90"/>
+<instance part="P+5" gate="VCC" x="40.64" y="30.48" rot="R90"/>
 <instance part="P+6" gate="VCC" x="73.66" y="22.86" rot="R90"/>
 <instance part="V11" gate="/1" x="114.3" y="38.1"/>
 <instance part="V11" gate="/2" x="195.58" y="60.96" rot="R180"/>
@@ -935,6 +878,9 @@ or will meet your specific requirements.&lt;p&gt;
 <instance part="GND1" gate="1" x="20.32" y="-10.16"/>
 <instance part="P+9" gate="VCC" x="20.32" y="-17.78"/>
 <instance part="V12" gate="/1" x="167.64" y="-48.26"/>
+<instance part="V12" gate="/2" x="139.7" y="38.1"/>
+<instance part="V12" gate="/3" x="195.58" y="78.74"/>
+<instance part="V12" gate="/4" x="5.08" y="134.62"/>
 </instances>
 <busses>
 <bus name="DOUT[0..7]">
@@ -1070,10 +1016,14 @@ or will meet your specific requirements.&lt;p&gt;
 <pinref part="V2" gate="1" pin="A"/>
 <wire x1="116.84" y1="152.4" x2="109.22" y2="152.4" width="0.1524" layer="91"/>
 <junction x="109.22" y="152.4"/>
-<wire x1="-5.08" y1="134.62" x2="-7.62" y2="134.62" width="0.1524" layer="91"/>
-<wire x1="-7.62" y1="134.62" x2="-7.62" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="-5.08" y1="132.08" x2="-7.62" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="-7.62" y1="132.08" x2="-7.62" y2="137.16" width="0.1524" layer="91"/>
 <junction x="-7.62" y="152.4"/>
-<pinref part="V6" gate="/1" pin="A"/>
+<pinref part="V12" gate="/4" pin="B"/>
+<pinref part="V12" gate="/4" pin="A"/>
+<wire x1="-7.62" y1="137.16" x2="-7.62" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="-5.08" y1="137.16" x2="-7.62" y2="137.16" width="0.1524" layer="91"/>
+<junction x="-7.62" y="137.16"/>
 </segment>
 </net>
 <net name="DATA_CLR" class="0">
@@ -1130,7 +1080,7 @@ or will meet your specific requirements.&lt;p&gt;
 <segment>
 <pinref part="V5" gate="/2" pin="!PRE"/>
 <pinref part="P+5" gate="VCC" pin="VCC"/>
-<wire x1="48.26" y1="30.48" x2="40.64" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="48.26" y1="30.48" x2="43.18" y2="30.48" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="V8" gate="/2" pin="!PRE"/>
@@ -1232,9 +1182,13 @@ or will meet your specific requirements.&lt;p&gt;
 <wire x1="-10.16" y1="76.2" x2="-17.78" y2="76.2" width="0.1524" layer="91"/>
 <wire x1="-10.16" y1="76.2" x2="-10.16" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="-10.16" y1="71.12" x2="182.88" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="182.88" y1="71.12" x2="182.88" y2="78.74" width="0.1524" layer="91"/>
-<pinref part="V6" gate="/3" pin="A"/>
-<wire x1="182.88" y1="78.74" x2="185.42" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="182.88" y1="71.12" x2="182.88" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="182.88" y1="76.2" x2="182.88" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="182.88" y1="81.28" x2="185.42" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="V12" gate="/3" pin="A"/>
+<pinref part="V12" gate="/3" pin="B"/>
+<wire x1="185.42" y1="76.2" x2="182.88" y2="76.2" width="0.1524" layer="91"/>
+<junction x="182.88" y="76.2"/>
 </segment>
 </net>
 <net name="RX_RDY" class="0">
@@ -1284,7 +1238,7 @@ or will meet your specific requirements.&lt;p&gt;
 <segment>
 <pinref part="V7" gate="/1" pin="CLK"/>
 <wire x1="20.32" y1="134.62" x2="15.24" y2="134.62" width="0.1524" layer="91"/>
-<pinref part="V6" gate="/1" pin="Y"/>
+<pinref part="V12" gate="/4" pin="Y"/>
 </segment>
 </net>
 <net name="N$10" class="0">
@@ -1362,17 +1316,17 @@ or will meet your specific requirements.&lt;p&gt;
 <junction x="45.72" y="60.96"/>
 <label x="165.1" y="60.96" size="1.778" layer="95"/>
 <pinref part="V9" gate="1" pin="!CLR"/>
-<wire x1="154.94" y1="43.18" x2="149.86" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="149.86" y1="43.18" x2="149.86" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="149.86" y1="60.96" x2="76.2" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="154.94" y1="43.18" x2="152.4" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="43.18" x2="152.4" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="60.96" x2="76.2" y2="60.96" width="0.1524" layer="91"/>
 <junction x="76.2" y="60.96"/>
 <wire x1="0" y1="60.96" x2="0" y2="53.34" width="0.1524" layer="91"/>
 <wire x1="0" y1="53.34" x2="2.54" y2="53.34" width="0.1524" layer="91"/>
-<wire x1="149.86" y1="60.96" x2="182.88" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="60.96" x2="182.88" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="V8" gate="/1" pin="!CLR"/>
 <wire x1="182.88" y1="60.96" x2="182.88" y2="-5.08" width="0.1524" layer="91"/>
 <wire x1="182.88" y1="-5.08" x2="185.42" y2="-5.08" width="0.1524" layer="91"/>
-<junction x="149.86" y="60.96"/>
+<junction x="152.4" y="60.96"/>
 <pinref part="V11" gate="/2" pin="Y"/>
 <wire x1="185.42" y1="60.96" x2="182.88" y2="60.96" width="0.1524" layer="91"/>
 <junction x="182.88" y="60.96"/>
@@ -1397,10 +1351,10 @@ or will meet your specific requirements.&lt;p&gt;
 </net>
 <net name="WR_CLK" class="0">
 <segment>
-<pinref part="V6" gate="/2" pin="Y"/>
 <pinref part="V9" gate="1" pin="CLK"/>
-<wire x1="147.32" y1="38.1" x2="154.94" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="38.1" x2="154.94" y2="38.1" width="0.1524" layer="91"/>
 <label x="144.78" y="38.1" size="1.778" layer="95" rot="R270"/>
+<pinref part="V12" gate="/2" pin="Y"/>
 </segment>
 </net>
 <net name="DONE" class="0">
@@ -1414,9 +1368,15 @@ or will meet your specific requirements.&lt;p&gt;
 </net>
 <net name="N$14" class="0">
 <segment>
-<pinref part="V6" gate="/2" pin="A"/>
 <pinref part="V11" gate="/1" pin="Y"/>
 <wire x1="127" y1="38.1" x2="124.46" y2="38.1" width="0.1524" layer="91"/>
+<pinref part="V12" gate="/2" pin="A"/>
+<wire x1="129.54" y1="40.64" x2="127" y2="40.64" width="0.1524" layer="91"/>
+<wire x1="127" y1="40.64" x2="127" y2="38.1" width="0.1524" layer="91"/>
+<pinref part="V12" gate="/2" pin="B"/>
+<wire x1="129.54" y1="35.56" x2="127" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="127" y1="35.56" x2="127" y2="38.1" width="0.1524" layer="91"/>
+<junction x="127" y="38.1"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -1424,8 +1384,8 @@ or will meet your specific requirements.&lt;p&gt;
 <pinref part="V11" gate="/2" pin="B"/>
 <wire x1="205.74" y1="63.5" x2="208.28" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="208.28" y1="63.5" x2="208.28" y2="78.74" width="0.1524" layer="91"/>
-<pinref part="V6" gate="/3" pin="Y"/>
 <wire x1="208.28" y1="78.74" x2="205.74" y2="78.74" width="0.1524" layer="91"/>
+<pinref part="V12" gate="/3" pin="Y"/>
 </segment>
 </net>
 <net name="GND" class="0">
